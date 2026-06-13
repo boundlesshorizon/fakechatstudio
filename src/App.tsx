@@ -200,21 +200,7 @@ export default function App() {
             />
           </div>
 
-          {/* Social tips helpful labels */}
-          <div className="mt-8 max-w-[480px] w-full bg-slate-900/40 p-4 border border-slate-800/80 rounded-2xl">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5 mb-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-              Why this goes viral 🚀
-            </h3>
-            <div className="grid grid-cols-2 gap-3 text-[11px] text-slate-400">
-              <div>
-                <span className="font-bold text-slate-200">Meme accounts:</span> Easy to craft wrong-number mix-ups or funny replies for Twitter, Instagram carousel slideshows, and TikTok backgrounds.
-              </div>
-              <div>
-                <span className="font-bold text-slate-200">Novelists & Pranksters:</span> Build believable lore, storybooks, conversational scripts, or send jokes to friends inside an immersive format.
-              </div>
-            </div>
-          </div>
+
         </div>
 
       </div>
