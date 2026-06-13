@@ -1,0 +1,6 @@
+{
+  "name": "Fake Text Message Generator",
+  "description": "Create pixel-perfect fake iMessage, WhatsApp, and Instagram DM screenshots with editable sender/receiver bubbles, customizable contact details, phone signals, battery percentages, and download them as high-quality PNGs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
