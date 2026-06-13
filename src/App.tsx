@@ -125,10 +125,10 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-screen w-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
+    <div className="flex flex-col lg:flex-row min-h-screen lg:h-screen w-screen bg-slate-950 text-slate-100 overflow-y-auto lg:overflow-hidden font-sans">
       
       {/* LEFT: WORKING CANVAS CONSOLE */}
-      <div className="flex-1 flex flex-col h-full overflow-y-auto relative bg-[#0f172a] bg-radial-grid">
+      <div className="flex-1 flex flex-col min-h-0 relative bg-[#0f172a] bg-radial-grid">
         
         {/* TITLE NAVIGATION HEADER BAR */}
         <header className="px-6 py-4 border-b border-slate-800 bg-slate-900/60 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 shrink-0 z-10">
@@ -185,7 +185,7 @@ export default function App() {
         )}
 
         {/* SCREEN WORKSPACE SECTION */}
-        <div className="flex-1 flex flex-col justify-center items-center py-8 px-4 md:px-12 relative min-h-[640px]">
+        <div className="flex-1 flex flex-col justify-center items-center py-6 px-4 md:px-12 relative lg:min-h-[580px]">
           
           {/* Main Visual Node Anchor */}
           <div className="relative group">
