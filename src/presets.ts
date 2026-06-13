@@ -378,5 +378,191 @@ export const CHAT_PRESETS: ChatPreset[] = [
         text: "That is the third time your PC updated this month, Sarah. We might need to upgrade your machine to a typewriter."
       }
     ]
+  },
+  {
+    name: "The Haunted Guitar (iMessage)",
+    description: "Selling a slightly haunted acoustic guitar on Craigslist.",
+    template: "imessage",
+    theme: "light",
+    contact: {
+      name: "Craigslist Buyer (Wayne)",
+      statusText: "online",
+      avatarUrl: "",
+      avatarColor: "#84cc16",
+      showAvatar: true
+    },
+    phone: {
+      carrier: "US Cellular",
+      signalStrength: 4,
+      wifiStrength: 3,
+      networkType: "LTE",
+      time: "11:15 PM",
+      batteryLevel: 72,
+      batteryCharging: false,
+      showStatusBar: true,
+      showInputBar: true,
+      theme: "light"
+    },
+    messages: [
+      {
+        id: "hg1",
+        sender: "them",
+        type: "text",
+        text: "Hi, is the $50 guitar still available? Can we meet behind the old mall?"
+      },
+      {
+        id: "hg2",
+        sender: "me",
+        type: "text",
+        text: "Yes it is! But full disclosure: it plays G-major chords by itself at exactly 3:00 AM."
+      },
+      {
+        id: "hg3",
+        sender: "them",
+        type: "text",
+        text: "wait like... intentionally? Or is it a draft?"
+      },
+      {
+        id: "hg4",
+        sender: "me",
+        type: "text",
+        text: "I do not know, Wayne. I tried taking the strings off and it still played. That is why it is $50 instead of $300."
+      },
+      {
+        id: "hg5",
+        sender: "them",
+        type: "text",
+        text: "honestly as long as it has a nice case I will take it. Can you throw in a pick"
+      },
+      {
+        id: "hg6",
+        sender: "me",
+        type: "text",
+        text: "The guitar won't let picks near it. It burns them."
+      }
+    ]
+  },
+  {
+    name: "Overprotective Mom (WhatsApp)",
+    description: "Mom is absolutely certain the new air fryer is spying on the family.",
+    template: "whatsapp",
+    theme: "light",
+    contact: {
+      name: "Mom ❤️",
+      statusText: "online",
+      avatarUrl: "",
+      avatarColor: "#ec4899",
+      showAvatar: true
+    },
+    phone: {
+      carrier: "Verizon",
+      signalStrength: 3,
+      wifiStrength: 2,
+      networkType: "WiFi",
+      time: "14:22",
+      batteryLevel: 89,
+      batteryCharging: false,
+      showStatusBar: true,
+      showInputBar: true,
+      theme: "light"
+    },
+    messages: [
+      {
+        id: "om1",
+        sender: "them",
+        type: "text",
+        text: "Sweetheart how do I turn off the camera on the potato machine",
+        time: "14:15"
+      },
+      {
+        id: "om2",
+        sender: "me",
+        type: "text",
+        text: "Mom, you mean the air fryer? It does not have a camera. It is just heat and air.",
+        time: "14:17",
+        status: "read"
+      },
+      {
+        id: "om3",
+        sender: "them",
+        type: "text",
+        text: "Then why did it make a beep noise when I walked by in my bathrobe?? It is connected to the hacker mainframe. I am unplugging it.",
+        time: "14:20"
+      },
+      {
+        id: "om4",
+        sender: "me",
+        type: "text",
+        text: "It was just a timer alert mom... Please leave it plugged in, I am cooking salmon.",
+        time: "14:21",
+        status: "read"
+      },
+      {
+        id: "om5",
+        sender: "them",
+        type: "text",
+        text: "Too late it is in the garage under a heavy blanket.",
+        time: "14:22"
+      }
+    ]
+  },
+  {
+    name: "The Cat Sitter Crisis (iMessage)",
+    description: "The cat is missing, but some weird clues are present.",
+    template: "imessage",
+    theme: "dark",
+    contact: {
+      name: "Cody (Cat Sitter)",
+      statusText: "typing...",
+      avatarUrl: "",
+      avatarColor: "#14b8a6",
+      showAvatar: true
+    },
+    phone: {
+      carrier: "T-Mobile",
+      signalStrength: 4,
+      wifiStrength: 4,
+      networkType: "5G",
+      time: "6:10 PM",
+      batteryLevel: 61,
+      batteryCharging: true,
+      showStatusBar: true,
+      showInputBar: true,
+      theme: "dark"
+    },
+    messages: [
+      {
+        id: "cs1",
+        sender: "them",
+        type: "text",
+        text: "I have some good news and some bad news about Mittens"
+      },
+      {
+        id: "cs2",
+        sender: "me",
+        type: "text",
+        text: "Oh no. Please tell me you didn't lose him again."
+      },
+      {
+        id: "cs3",
+        sender: "them",
+        type: "text",
+        text: "The bad news is I haven't seen him in 6 hours. The good news is I hear faint crunching noises coming from the locked laundry room vents."
+      },
+      {
+        id: "cs4",
+        sender: "them",
+        type: "image",
+        text: "I think he bypassed the security barricade Ibuilt for him.",
+        imageUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop&q=60",
+        time: "6:08 PM"
+      },
+      {
+        id: "cs5",
+        sender: "me",
+        type: "text",
+        text: "Cody, that is a picture of a golden retriever puppy. I own a black tabby CAT. Whose house are you even at??"
+      }
+    ]
   }
 ];

@@ -197,6 +197,20 @@ export default function App() {
               messages={messages}
               showPhoneFrame={showPhoneFrame}
               watermark={watermark}
+              onUpdateMessageImage={(id, base64) => {
+                setMessages(prev => prev.map(m => m.id === id ? { ...m, imageUrl: base64 } : m));
+              }}
+              onAddImageMessage={(base64) => {
+                const newMsg = {
+                  id: `m_${Date.now()}_img`,
+                  sender: messages.length > 0 && messages[messages.length - 1].sender === 'me' ? 'them' : 'me',
+                  type: 'image' as const,
+                  imageUrl: base64,
+                  time: template === 'whatsapp' ? '12:45' : 'Delivered',
+                  status: 'read'
+                };
+                setMessages(prev => [...prev, newMsg]);
+              }}
             />
           </div>
 

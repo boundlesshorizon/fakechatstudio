@@ -64,6 +64,66 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
   onLoadPreset,
 }) => {
   const [activeTab, setActiveTab] = useState<'presets' | 'design' | 'profile' | 'messages'>('messages');
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiPlatform, setAiPlatform] = useState<TemplateType>('imessage');
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  const handleGenerateAiPreset = async () => {
+    if (!aiPrompt.trim()) return;
+    setIsGeneratingAi(true);
+    setAiError(null);
+    try {
+      const res = await fetch("/api/generate-scenario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: aiPrompt,
+          template: aiPlatform
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to generate AI dialogue");
+      }
+      
+      const newPreset: ChatPreset = {
+        name: `🔮 AI: ${data.contactName || "Generated"}`,
+        description: `Prompt Idea: ${aiPrompt}`,
+        template: aiPlatform,
+        theme: (data.theme || "light") as ThemeMode,
+        contact: {
+          name: data.contactName || "Prank target",
+          statusText: data.contactStatusText || "online",
+          avatarUrl: "",
+          avatarColor: PRESET_AVATAR_COLORS[Math.floor(Math.random() * PRESET_AVATAR_COLORS.length)],
+          showAvatar: true
+        },
+        phone: {
+          ...phoneSettings,
+          theme: (data.theme || "light") as ThemeMode,
+          time: "12:00 PM"
+        },
+        messages: data.messages.map((m: any, i: number) => ({
+          id: `ai_${Date.now()}_${i}`,
+          sender: m.sender || "them",
+          type: m.type || "text",
+          text: m.text || "",
+          imageUrl: m.imageUrl || undefined,
+          time: m.time || "12:00 PM",
+          status: m.status || "none"
+        }))
+      };
+      
+      onLoadPreset(newPreset);
+      setAiPrompt("");
+    } catch (err: any) {
+      console.error(err);
+      setAiError(err.message || "Failed to connect to the generator engine.");
+    } finally {
+      setIsGeneratingAi(false);
+    }
+  };
 
   // Triggered when editing field in Phone Settings
   const updatePhone = (fields: Partial<PhoneSettings>) => {
@@ -198,16 +258,80 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
         {/* ==================== TAB: PRESETS ==================== */}
         {activeTab === 'presets' && (
           <div className="space-y-4">
+            
+            {/* AI Preset Prompt Generator Card */}
+            <div className="bg-gradient-to-br from-indigo-950/80 to-blue-950/80 border border-indigo-500/30 p-4 rounded-xl shadow-xl space-y-3">
+              <h3 className="text-xs font-extrabold text-indigo-300 tracking-wider uppercase flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                AI custom scenario generator
+              </h3>
+              <p className="text-[11px] text-indigo-200 leading-relaxed">
+                Describe ANY funny prank scenario you want—funny, awkward, or viral marketplace drama! Our generator writes perfect back-and-forth dialogue instantly.
+              </p>
+              
+              <div className="space-y-2 pt-1">
+                <textarea
+                  id="ai-scenario-prompt-input"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 placeholder-slate-500"
+                  rows={3}
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  placeholder="e.g. Scammer demands standard shipping on a free piano but I only accept payment in rare Pokemon cards"
+                />
+
+                <div className="flex gap-2 items-center justify-between">
+                  <div className="flex flex-col">
+                    <label className="text-[9px] uppercase font-bold text-indigo-300">Target Chat App</label>
+                    <select
+                      id="ai-platform-spinner"
+                      value={aiPlatform}
+                      onChange={(e) => setAiPlatform(e.target.value as TemplateType)}
+                      className="bg-slate-900 border border-slate-850 rounded px-2 py-1 text-[10px] text-slate-200 focus:outline-none cursor-pointer"
+                    >
+                      <option value="imessage">iMessage</option>
+                      <option value="whatsapp">WhatsApp</option>
+                      <option value="instagram">Instagram</option>
+                      <option value="messenger">Messenger</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="button"
+                    id="btn-trigger-ai-generator"
+                    disabled={isGeneratingAi || !aiPrompt.trim()}
+                    onClick={handleGenerateAiPreset}
+                    className="py-1.5 px-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-[11px] rounded-lg tracking-wide uppercase shadow active:scale-95 transition-all flex items-center gap-1 disabled:opacity-50 cursor-pointer"
+                  >
+                    {isGeneratingAi ? (
+                      <>
+                        <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Conjuring...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3 h-3 text-amber-300" />
+                        <span>Build Scenario</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {aiError && (
+                  <p className="text-[10px] text-red-400 font-medium leading-tight mt-1">⚠️ {aiError}</p>
+                )}
+              </div>
+            </div>
+
             <div className="bg-slate-800/40 border border-slate-700/80 p-4 rounded-xl">
               <h3 className="text-sm font-semibold text-blue-400 flex items-center gap-2 mb-1.5">
-                <Sparkles className="w-4 h-4 text-amber-400" />
+                <FolderOpen className="w-4 h-4 text-amber-400" />
                 Quick Prank Templates
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed">
                 Click any pre-built scenario below to load editable messages instantly. Change names, texts, themes and have fun!
               </p>
             </div>
-
+ 
             <div className="space-y-3">
               {CHAT_PRESETS.map((preset, index) => (
                 <button
@@ -231,7 +355,7 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
               ))}
             </div>
           </div>
-        )}
+        )/* DESIGN LAYOUT */}
 
         {/* ==================== TAB: DESIGN LAYOUT ==================== */}
         {activeTab === 'design' && (
@@ -729,15 +853,51 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
                         </div>
                       ) : (
                         <div className="space-y-3">
-                          <div className="space-y-1">
-                            <label className="text-[9px] uppercase text-slate-400 font-semibold">Image URL</label>
-                            <input 
-                              type="text"
-                              id={`msg-image-url-${msg.id}`}
-                              className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-slate-600"
-                              value={msg.imageUrl}
-                              onChange={(e) => handleEditMessageField(msg.id, 'imageUrl', e.target.value)}
-                            />
+                           <div className="space-y-1">
+                            <label className="text-[9px] uppercase text-slate-400 font-semibold flex justify-between items-center">
+                              <span>Image URL / Custom Photo</span>
+                              <span className="text-[8px] text-blue-400 font-bold uppercase">Supported File Drop</span>
+                            </label>
+                            
+                            <div className="flex gap-1.5 items-center">
+                              <input 
+                                type="text"
+                                id={`msg-image-url-${msg.id}`}
+                                className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-slate-500"
+                                value={msg.imageUrl}
+                                onChange={(e) => handleEditMessageField(msg.id, 'imageUrl', e.target.value)}
+                                placeholder="Paste standard URL or upload below..."
+                              />
+                            </div>
+
+                            {/* Direct Local File upload trigger button - the "+" requested */}
+                            <div className="mt-1 flex items-center gap-2">
+                              <label
+                                htmlFor={`sidebar-file-picker-${msg.id}`}
+                                className="flex items-center gap-1 bg-slate-950 border border-slate-800 hover:border-blue-500 text-blue-400 hover:text-blue-300 font-bold text-[10.5px] rounded-lg px-3 py-1 cursor-pointer transition-all shadow-sm"
+                              >
+                                <Plus className="w-3.5 h-3.5 text-blue-400 stroke-[2.5]" />
+                                <span>Upload custom image file</span>
+                              </label>
+                              <input
+                                type="file"
+                                id={`sidebar-file-picker-${msg.id}`}
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = (event) => {
+                                      if (event.target?.result) {
+                                        handleEditMessageField(msg.id, 'imageUrl', event.target.result as string);
+                                      }
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                              />
+                            </div>
                           </div>
 
                           {/* Quick attach library */}

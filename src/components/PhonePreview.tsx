@@ -32,6 +32,8 @@ interface PhonePreviewProps {
   messages: Message[];
   showPhoneFrame: boolean;
   watermark: boolean;
+  onUpdateMessageImage?: (id: string, base64: string) => void;
+  onAddImageMessage?: (base64: string) => void;
 }
 
 export const PhonePreview = forwardRef<HTMLDivElement, PhonePreviewProps>(({
@@ -41,6 +43,8 @@ export const PhonePreview = forwardRef<HTMLDivElement, PhonePreviewProps>(({
   messages,
   showPhoneFrame,
   watermark,
+  onUpdateMessageImage,
+  onAddImageMessage,
 }, ref) => {
   const isDark = phoneSettings.theme === 'dark';
 
@@ -380,14 +384,40 @@ export const PhonePreview = forwardRef<HTMLDivElement, PhonePreviewProps>(({
                     
                     {/* Render Image Message */}
                     {msg.type === 'image' && msg.imageUrl && (
-                      <div className={`overflow-hidden rounded-2xl shadow-sm border ${
-                        isDark ? 'border-zinc-800' : 'border-zinc-200'
-                      }`}>
+                      <div className="relative group/img cursor-pointer overflow-hidden rounded-2xl shadow-sm border border-black/10 dark:border-zinc-800">
                         <img 
                           src={msg.imageUrl} 
                           alt="shared" 
-                          className="max-w-[190px] max-h-[190px] object-cover rounded-2xl" 
+                          className="max-w-[190px] max-h-[190px] object-cover rounded-2xl transition-all group-hover/img:brightness-50" 
                           referrerPolicy="no-referrer"
+                          onClick={() => {
+                            const fileInput = document.getElementById(`phone-image-uploader-${msg.id}`);
+                            if (fileInput) fileInput.click();
+                          }}
+                        />
+                        <div 
+                          className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all text-xs text-white font-bold pointer-events-none bg-black/40"
+                        >
+                          <Camera className="w-4 h-4 mr-1 text-white" />
+                          <span>Replace Photo</span>
+                        </div>
+                        <input
+                          type="file"
+                          id={`phone-image-uploader-${msg.id}`}
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file && onUpdateMessageImage) {
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                if (event.target?.result) {
+                                  onUpdateMessageImage(msg.id, event.target.result as string);
+                                }
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
                         />
                       </div>
                     )}
@@ -498,10 +528,29 @@ export const PhonePreview = forwardRef<HTMLDivElement, PhonePreviewProps>(({
               isDark ? 'bg-[#121212] border-zinc-800' : 'bg-white border-zinc-200'
             }`}>
               
+              <input
+                type="file"
+                id="phone-global-image-appender"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file && onAddImageMessage) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      if (event.target?.result) {
+                        onAddImageMessage(event.target.result as string);
+                      }
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+
               {/* A. iMESSAGE INPUT */}
               {template === 'imessage' && (
                 <div className="flex items-center gap-1 w-full px-1">
-                  <Camera className="w-6 h-6 text-zinc-400 cursor-pointer" />
+                  <Camera onClick={() => document.getElementById('phone-global-image-appender')?.click()} className="w-6 h-6 text-zinc-400 cursor-pointer hover:text-[#007aff]" />
                   <Inbox className="w-6 h-6 text-zinc-400 cursor-pointer" />
                   <div className={`flex-1 flex items-center border rounded-full px-2.5 py-1.5 min-h-[34px] ${
                     isDark ? 'border-zinc-800 bg-black' : 'border-zinc-200 bg-white'
@@ -521,9 +570,9 @@ export const PhonePreview = forwardRef<HTMLDivElement, PhonePreviewProps>(({
                     isDark ? 'bg-[#202c33] text-white' : 'bg-white text-zinc-700'
                   }`}>
                     <Smile className="w-5 h-5 text-zinc-400 cursor-pointer" />
-                    <Paperclip className="w-5 h-5 text-zinc-400 cursor-pointer rotate-45" />
+                    <Paperclip onClick={() => document.getElementById('phone-global-image-appender')?.click()} className="w-5 h-5 text-zinc-400 cursor-pointer rotate-45 hover:text-emerald-500" />
                     <span className="text-sm text-zinc-400 flex-1">Message</span>
-                    <Camera className="w-5 h-5 text-zinc-400 cursor-pointer" />
+                    <Camera onClick={() => document.getElementById('phone-global-image-appender')?.click()} className="w-5 h-5 text-zinc-400 cursor-pointer hover:text-emerald-500" />
                   </div>
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center cursor-pointer shadow-md text-white ${
                     isDark ? 'bg-[#005c4b]' : 'bg-[#00a884]'
@@ -538,12 +587,12 @@ export const PhonePreview = forwardRef<HTMLDivElement, PhonePreviewProps>(({
                 <div className={`flex items-center rounded-full border px-3 py-1.5 gap-2 w-full ${
                   isDark ? 'border-zinc-800 bg-black' : 'border-zinc-200 bg-white'
                 }`}>
-                  <div className="p-1 rounded-full bg-[#3797f0] text-white">
+                  <div onClick={() => document.getElementById('phone-global-image-appender')?.click()} className="p-1 rounded-full bg-[#3797f0] text-white cursor-pointer hover:bg-opacity-80">
                     <Camera className="w-3.5 h-3.5 fill-current" />
                   </div>
                   <span className="text-[13px] text-zinc-400 flex-1">Message...</span>
                   <Mic className="w-[18px] h-[18px] text-zinc-400 cursor-pointer" />
-                  <ImageIcon className="w-[18px] h-[18px] text-zinc-400 cursor-pointer" />
+                  <ImageIcon onClick={() => document.getElementById('phone-global-image-appender')?.click()} className="w-[18px] h-[18px] text-zinc-400 cursor-pointer hover:text-[#c13584]" />
                   <Heart className="w-[18px] h-[18px] text-zinc-400 cursor-pointer" />
                 </div>
               )}
@@ -553,8 +602,8 @@ export const PhonePreview = forwardRef<HTMLDivElement, PhonePreviewProps>(({
                 <div className="flex items-center gap-2.5 w-full px-1">
                   <div className="flex items-center gap-2 text-[#0084ff]">
                     <MoreHorizontal className="w-[20px] h-[20px] cursor-pointer" />
-                    <Camera className="w-[20px] h-[20px] cursor-pointer" />
-                    <ImageIcon className="w-[20px] h-[20px] cursor-pointer" />
+                    <Camera onClick={() => document.getElementById('phone-global-image-appender')?.click()} className="w-[20px] h-[20px] cursor-pointer hover:text-blue-500" />
+                    <ImageIcon onClick={() => document.getElementById('phone-global-image-appender')?.click()} className="w-[20px] h-[20px] cursor-pointer hover:text-blue-500" />
                     <Mic className="w-[20px] h-[20px] cursor-pointer" />
                   </div>
                   <div className={`flex-1 flex items-center rounded-full px-3 py-1.5 ${
